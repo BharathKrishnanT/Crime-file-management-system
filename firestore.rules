@@ -1,0 +1,253 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (auth.uid)
+    // Fields:
+    //   - email: string (required, valid email)
+    //   - displayName: string (optional)
+    //   - role: string (required, enum: 'inspector', 'asi', 'writer', 'constable', 'judge')
+    //   - stationId: string (optional)
+    //
+    // Collection: cases
+    // Document ID: caseId (auto-generated)
+    // Fields:
+    //   - firNumber: string (required)
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - status: string (required, enum: 'open', 'closed', 'hearing', 'investigation')
+    //   - createdAt: timestamp (required, immutable)
+    //   - createdBy: string (required, immutable, auth.uid)
+    //   - stationId: string (optional)
+    //   - victimDetails: string (optional)
+    //   - suspectDetails: string (optional)
+    //
+    // Subcollection: cases/{caseId}/files
+    // Document ID: fileId (auto-generated)
+    // Fields:
+    //   - type: string (required, enum: 'fir', 'victim', 'suspect', 'evidence', 'other')
+    //   - url: string (required, valid URL)
+    //   - uploadedBy: string (required, immutable, auth.uid)
+    //   - createdAt: timestamp (required, immutable)
+    //
+    // Subcollection: cases/{caseId}/history
+    // Document ID: historyId (auto-generated)
+    // Fields:
+    //   - action: string (required)
+    //   - details: string (required)
+    //   - performedBy: string (required, immutable, auth.uid)
+    //   - timestamp: timestamp (required, immutable)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.email == 'bharathkrishnan.t@gmail.com';
+    }
+
+    // Safe user document retrieval
+    function getUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function hasRole(role) {
+      let u = getUserDoc();
+      return isAuthenticated() && u != null && u.data.role == role;
+    }
+
+    function hasAnyRole(roles) {
+      let u = getUserDoc();
+      return isAuthenticated() && u != null && u.data.role in roles;
+    }
+
+    function isInspector() {
+      return hasRole('inspector');
+    }
+
+    function isAsi() {
+      return hasRole('asi');
+    }
+
+    function isWriter() {
+      return hasRole('writer');
+    }
+
+    function isConstable() {
+      return hasRole('constable');
+    }
+
+    function isJudge() {
+      return hasRole('judge');
+    }
+
+    // Role Hierarchy / Permissions Mapping
+    // Inspector: Create, Read, Update, Delete
+    // ASI: Create, Read, Update
+    // Writer: Create, Read (cannot update other files, implies create-only for new files, read-only for existing)
+    // Constable: Read
+    // Judge: Read
+
+    function canCreateCase() {
+      return isSuperAdmin() || hasAnyRole(['inspector', 'asi', 'writer']);
+    }
+
+    function canUpdateCase() {
+      return isSuperAdmin() || hasAnyRole(['inspector', 'asi']);
+    }
+
+    function canDeleteCase() {
+      return isSuperAdmin() || isInspector();
+    }
+
+    function canReadCase() {
+      return isSuperAdmin() || hasAnyRole(['inspector', 'asi', 'writer', 'constable', 'judge']);
+    }
+
+    // Validation Helpers
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function isValidRole(role) {
+      return role in ['inspector', 'asi', 'writer', 'constable', 'judge', 'admin'];
+    }
+
+    function isValidStatus(status) {
+      return status in ['open', 'closed', 'hearing', 'investigation'];
+    }
+
+    function isValidFileType(type) {
+      return type in ['fir', 'victim', 'suspect', 'evidence', 'other'];
+    }
+
+    // Domain Validators
+
+    function isValidUser(data) {
+      return hasRequiredFields(['email', 'role']) &&
+             isValidEmail(data.email) &&
+             isValidRole(data.role) &&
+             (!('displayName' in data) || data.displayName is string) &&
+             (!('stationId' in data) || data.stationId is string);
+    }
+
+    function isValidCase(data) {
+      return hasRequiredFields(['firNumber', 'title', 'status', 'createdAt', 'createdBy']) &&
+             data.firNumber is string &&
+             data.title is string &&
+             isValidStatus(data.status) &&
+             data.createdAt is timestamp &&
+             data.createdBy == request.auth.uid &&
+             (!('description' in data) || data.description is string) &&
+             (!('stationId' in data) || data.stationId is string) &&
+             (!('victimDetails' in data) || data.victimDetails is string) &&
+             (!('suspectDetails' in data) || data.suspectDetails is string) &&
+             (!('creatorName' in data) || data.creatorName is string);
+    }
+
+    function isValidCaseUpdate(data) {
+      // Allow updates to status, description, details
+      // Prevent updates to immutable fields: createdAt, createdBy
+      return (!('createdAt' in data) || data.createdAt == resource.data.createdAt) &&
+             (!('createdBy' in data) || data.createdBy == resource.data.createdBy) &&
+             (!('creatorName' in data) || data.creatorName == resource.data.creatorName) &&
+             (!('firNumber' in data) || data.firNumber is string) &&
+             (!('title' in data) || data.title is string) &&
+             (!('status' in data) || isValidStatus(data.status));
+    }
+
+    function isValidFile(data) {
+      return hasRequiredFields(['type', 'url', 'uploadedBy', 'createdAt']) &&
+             isValidFileType(data.type) &&
+             isValidUrl(data.url) &&
+             data.uploadedBy == request.auth.uid &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidHistory(data) {
+      return hasRequiredFields(['action', 'details', 'performedBy', 'timestamp']) &&
+             data.action is string &&
+             data.details is string &&
+             data.performedBy == request.auth.uid &&
+             data.timestamp is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      // Allow authenticated users to read profiles (for directory/database view)
+      allow read: if isAuthenticated();
+      // Allow creation of user profile on signup (self-registration for demo)
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      // Allow update of own profile
+      allow update: if (isOwner(userId) || isSuperAdmin()) && isValidUser(request.resource.data);
+    }
+
+    match /cases/{caseId} {
+      // Read: Everyone with a valid role
+      allow read: if canReadCase();
+      
+      // Create: Inspector, ASI, Writer
+      allow create: if isAuthenticated() && canCreateCase() && isValidCase(request.resource.data);
+      
+      // Update: Inspector, ASI
+      allow update: if isAuthenticated() && canUpdateCase() && isValidCaseUpdate(request.resource.data);
+      
+      // Delete: Inspector only
+      allow delete: if isAuthenticated() && canDeleteCase();
+
+      match /files/{fileId} {
+        // Read: Everyone with a valid role
+        allow read: if canReadCase();
+        
+        // Create: Inspector, ASI, Writer
+        allow create: if isAuthenticated() && canCreateCase() && isValidFile(request.resource.data);
+        
+        // Update: Inspector, ASI
+        allow update: if isAuthenticated() && canUpdateCase();
+        
+        // Delete: Inspector only
+        allow delete: if isAuthenticated() && canDeleteCase();
+      }
+
+      match /history/{historyId} {
+        // Read: Everyone with a valid role
+        allow read: if canReadCase();
+        
+        // Create: Inspector, ASI, Writer (System generated usually, but client writes for now)
+        allow create: if isAuthenticated() && (canCreateCase() || canUpdateCase()) && isValidHistory(request.resource.data);
+        
+        // Update: No one (History is immutable)
+        allow update: if false;
+        
+        // Delete: No one (History is immutable)
+        allow delete: if false;
+      }
+    }
+  }
+}

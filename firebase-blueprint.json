@@ -1,0 +1,89 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the system (Inspector, ASI, Writer, Constable, Judge).",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": {
+          "type": "string",
+          "enum": ["inspector", "asi", "writer", "constable", "judge", "admin"],
+          "description": "The role of the user."
+        },
+        "stationId": { "type": "string", "description": "The police station ID." }
+      },
+      "required": ["email", "role"]
+    },
+    "Case": {
+      "title": "Case",
+      "description": "A crime file or case.",
+      "type": "object",
+      "properties": {
+        "firNumber": { "type": "string", "description": "First Information Report Number." },
+        "title": { "type": "string", "description": "Title of the case." },
+        "description": { "type": "string", "description": "Description of the incident." },
+        "status": {
+          "type": "string",
+          "enum": ["open", "closed", "hearing", "investigation"],
+          "description": "Current status of the case."
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string", "description": "UID of the creator." },
+        "creatorName": { "type": "string", "description": "Display name of the creator." },
+        "stationId": { "type": "string", "description": "The police station ID." },
+        "victimDetails": { "type": "string", "description": "Details about the victim." },
+        "suspectDetails": { "type": "string", "description": "Details about the suspect." }
+      },
+      "required": ["firNumber", "title", "status", "createdAt", "createdBy"]
+    },
+    "File": {
+      "title": "File",
+      "description": "A file attached to a case.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["fir", "victim", "suspect", "evidence", "other"],
+          "description": "Type of the file."
+        },
+        "url": { "type": "string", "description": "URL of the file." },
+        "description": { "type": "string", "description": "Description of the file." },
+        "uploadedBy": { "type": "string", "description": "UID of the uploader." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "url", "uploadedBy", "createdAt"]
+    },
+    "History": {
+      "title": "History",
+      "description": "A record of changes made to a case.",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "description": "The action performed (e.g., 'Status Update', 'Edit Case')." },
+        "details": { "type": "string", "description": "Details of the change." },
+        "performedBy": { "type": "string", "description": "UID of the user who performed the action." },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["action", "details", "performedBy", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Users collection."
+    },
+    "cases/{caseId}": {
+      "schema": "Case",
+      "description": "Cases collection."
+    },
+    "cases/{caseId}/files/{fileId}": {
+      "schema": "File",
+      "description": "Files attached to a case."
+    },
+    "cases/{caseId}/history/{historyId}": {
+      "schema": "History",
+      "description": "History of changes for a case."
+    }
+  }
+}

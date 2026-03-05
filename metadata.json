@@ -1,0 +1,5 @@
+{
+  "name": "Crime File Management System",
+  "description": "A digital case file management system for police stations and courts with role-based access control for Inspectors, ASIs, Constables, and Judges.",
+  "requestFramePermissions": []
+}
