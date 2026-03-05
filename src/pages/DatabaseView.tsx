@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Users, FileText, UserX, Gavel, Search, Shield } from 'lucide-react';
+import { Users, FileText, UserX, Gavel, Search, Shield, Database } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function DatabaseViewer() {
-  const [activeTab, setActiveTab] = useState<'personnel' | 'cases' | 'subjects'>('personnel');
+export default function DatabaseView() {
+  const { userProfile, user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'police' | 'court' | 'cases' | 'subjects'>('police');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Permission check
+  const isAdmin = user?.email === 'bharathkrishnan.t@gmail.com' || userProfile?.role === 'admin';
+  const canViewDatabase = isAdmin || userProfile?.role === 'inspector';
+
   useEffect(() => {
+    if (!canViewDatabase) return;
     fetchData();
-  }, [activeTab]);
+  }, [activeTab, canViewDatabase]);
 
   const fetchData = async () => {
     setLoading(true);
     setData([]);
     try {
       let q;
-      if (activeTab === 'personnel') {
-        q = query(collection(db, 'users'));
-      } else if (activeTab === 'cases') {
-        q = query(collection(db, 'cases'), orderBy('createdAt', 'desc'));
-      } else if (activeTab === 'subjects') {
-        // For subjects, we fetch cases and extract victim/suspect details
+      if (activeTab === 'police') {
+        q = query(collection(db, 'users'), where('role', 'in', ['inspector', 'asi', 'writer', 'constable', 'admin']));
+      } else if (activeTab === 'court') {
+        q = query(collection(db, 'users'), where('role', '==', 'judge'));
+      } else if (activeTab === 'cases' || activeTab === 'subjects') {
         q = query(collection(db, 'cases'), orderBy('createdAt', 'desc'));
       }
 
@@ -43,7 +49,7 @@ export default function DatabaseViewer() {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     
-    if (activeTab === 'personnel') {
+    if (activeTab === 'police' || activeTab === 'court') {
       return (
         item.displayName?.toLowerCase().includes(term) ||
         item.email?.toLowerCase().includes(term) ||
@@ -66,12 +72,24 @@ export default function DatabaseViewer() {
     return true;
   });
 
+  if (!canViewDatabase) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        <h2 className="text-xl font-bold">Access Denied</h2>
+        <p>You do not have permission to view the master database.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Central Database</h1>
-          <p className="text-gray-500">Registry of personnel, cases, and subjects.</p>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Database className="w-6 h-6 text-indigo-600" />
+            Master Database
+          </h1>
+          <p className="text-gray-500">Registry of police, court, cases, and subjects.</p>
         </div>
         
         <div className="relative w-full md:w-64">
@@ -87,29 +105,38 @@ export default function DatabaseViewer() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg w-fit">
         <button
-          onClick={() => setActiveTab('personnel')}
+          onClick={() => setActiveTab('police')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'personnel' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            activeTab === 'police' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          <Users className="w-4 h-4" />
-          Personnel
+          <Shield className="w-4 h-4" />
+          Police Officers
+        </button>
+        <button
+          onClick={() => setActiveTab('court')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'court' ? 'bg-white text-purple-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Gavel className="w-4 h-4" />
+          Court Officials
         </button>
         <button
           onClick={() => setActiveTab('cases')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'cases' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            activeTab === 'cases' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <FileText className="w-4 h-4" />
-          Case Registry
+          Case Files
         </button>
         <button
           onClick={() => setActiveTab('subjects')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'subjects' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            activeTab === 'subjects' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <UserX className="w-4 h-4" />
@@ -123,7 +150,7 @@ export default function DatabaseViewer() {
           <div className="p-8 text-center text-gray-500">Loading database records...</div>
         ) : (
           <div className="overflow-x-auto">
-            {activeTab === 'personnel' && (
+            {(activeTab === 'police' || activeTab === 'court') && (
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
@@ -155,7 +182,7 @@ export default function DatabaseViewer() {
                   ))}
                   {filteredData.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">No personnel found.</td>
+                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">No records found.</td>
                     </tr>
                   )}
                 </tbody>
@@ -221,12 +248,12 @@ export default function DatabaseViewer() {
                         <p className="text-xs text-gray-500 truncate max-w-[150px]">{kase.title}</p>
                       </td>
                       <td className="px-6 py-3 text-gray-700">
-                        <div className="max-h-20 overflow-y-auto text-xs">
+                        <div className="max-h-20 overflow-y-auto text-xs whitespace-pre-wrap">
                           {kase.victimDetails || <span className="text-gray-400 italic">Not recorded</span>}
                         </div>
                       </td>
                       <td className="px-6 py-3 text-gray-700">
-                        <div className="max-h-20 overflow-y-auto text-xs">
+                        <div className="max-h-20 overflow-y-auto text-xs whitespace-pre-wrap">
                           {kase.suspectDetails || <span className="text-gray-400 italic">Not recorded</span>}
                         </div>
                       </td>

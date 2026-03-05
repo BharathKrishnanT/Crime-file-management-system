@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard';
 import CreateCase from './pages/CreateCase';
 import CaseDetails from './pages/CaseDetails';
 
-import DatabaseViewer from './pages/DatabaseViewer';
+import DatabaseView from './pages/DatabaseView';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -28,7 +28,7 @@ export default function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="create-case" element={<CreateCase />} />
-            <Route path="database" element={<DatabaseViewer />} />
+            <Route path="database" element={<DatabaseView />} />
             <Route path="cases/:id" element={<CaseDetails />} />
           </Route>
         </Routes>
