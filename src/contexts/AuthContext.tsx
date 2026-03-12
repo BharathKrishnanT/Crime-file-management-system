@@ -9,6 +9,7 @@ interface UserProfile {
   displayName: string;
   role: 'inspector' | 'asi' | 'writer' | 'constable' | 'judge' | 'admin';
   stationId?: string;
+  firNumber?: string;
 }
 
 interface AuthContextType {
@@ -17,7 +18,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: () => Promise<void>;
   logout: () => Promise<void>;
-  setUserRole: (role: UserProfile['role']) => Promise<void>;
+  setUserRole: (role: UserProfile['role'], firNumber?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,14 +57,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signOut(auth);
   };
 
-  const setUserRole = async (role: UserProfile['role']) => {
+  const setUserRole = async (role: UserProfile['role'], firNumber?: string) => {
     if (!user) return;
     const profile: UserProfile = {
       uid: user.uid,
       email: user.email || '',
       displayName: user.displayName || '',
       role,
-      stationId: 'default-station'
+      stationId: 'default-station',
+      ...(firNumber && { firNumber })
     };
     await setDoc(doc(db, 'users', user.uid), profile);
     setUserProfile(profile);

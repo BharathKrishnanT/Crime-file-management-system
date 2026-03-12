@@ -86,7 +86,7 @@ export default function DatabaseView() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Database className="w-6 h-6 text-indigo-600" />
+            <Database className="w-6 h-6 text-emerald-600" />
             Master Database
           </h1>
           <p className="text-gray-500">Registry of police, court, cases, and subjects.</p>
@@ -99,17 +99,17 @@ export default function DatabaseView() {
             placeholder="Search database..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full pl-10 pr-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg w-fit">
+      <div className="flex flex-wrap gap-1 bg-stone-200 p-1 rounded-lg w-fit">
         <button
           onClick={() => setActiveTab('police')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'police' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'police' ? 'bg-stone-50 text-emerald-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <Shield className="w-4 h-4" />
@@ -118,7 +118,7 @@ export default function DatabaseView() {
         <button
           onClick={() => setActiveTab('court')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'court' ? 'bg-white text-purple-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'court' ? 'bg-stone-50 text-purple-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <Gavel className="w-4 h-4" />
@@ -127,7 +127,7 @@ export default function DatabaseView() {
         <button
           onClick={() => setActiveTab('cases')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'cases' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'cases' ? 'bg-stone-50 text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -136,7 +136,7 @@ export default function DatabaseView() {
         <button
           onClick={() => setActiveTab('subjects')}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'subjects' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'subjects' ? 'bg-stone-50 text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <UserX className="w-4 h-4" />
@@ -145,14 +145,14 @@ export default function DatabaseView() {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-stone-50 rounded-xl shadow-sm border border-stone-200 overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-gray-500">Loading database records...</div>
         ) : (
           <div className="overflow-x-auto">
             {(activeTab === 'police' || activeTab === 'court') && (
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-stone-100 border-b border-stone-200">
                   <tr>
                     <th className="px-6 py-3 font-medium text-gray-500">Name</th>
                     <th className="px-6 py-3 font-medium text-gray-500">Role</th>
@@ -160,11 +160,11 @@ export default function DatabaseView() {
                     <th className="px-6 py-3 font-medium text-gray-500">Station ID</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-stone-200">
                   {filteredData.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
+                    <tr key={user.id} className="hover:bg-stone-100">
                       <td className="px-6 py-3 font-medium text-gray-900 flex items-center gap-2">
-                        {user.role === 'judge' ? <Gavel className="w-4 h-4 text-purple-600" /> : <Shield className="w-4 h-4 text-indigo-600" />}
+                        {user.role === 'judge' ? <Gavel className="w-4 h-4 text-purple-600" /> : <Shield className="w-4 h-4 text-emerald-600" />}
                         {user.displayName || 'N/A'}
                       </td>
                       <td className="px-6 py-3">
@@ -191,7 +191,7 @@ export default function DatabaseView() {
 
             {activeTab === 'cases' && (
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-stone-100 border-b border-stone-200">
                   <tr>
                     <th className="px-6 py-3 font-medium text-gray-500">FIR #</th>
                     <th className="px-6 py-3 font-medium text-gray-500">Title</th>
@@ -200,9 +200,9 @@ export default function DatabaseView() {
                     <th className="px-6 py-3 font-medium text-gray-500">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-stone-200">
                   {filteredData.map((kase) => (
-                    <tr key={kase.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => window.location.href = `/cases/${kase.id}`}>
+                    <tr key={kase.id} className="hover:bg-stone-100 cursor-pointer" onClick={() => window.location.href = `/cases/${kase.id}`}>
                       <td className="px-6 py-3 font-mono text-gray-600">{kase.firNumber}</td>
                       <td className="px-6 py-3 font-medium text-gray-900">{kase.title}</td>
                       <td className="px-6 py-3">
@@ -230,7 +230,7 @@ export default function DatabaseView() {
 
             {activeTab === 'subjects' && (
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-stone-100 border-b border-stone-200">
                   <tr>
                     <th className="px-6 py-3 font-medium text-gray-500 w-1/4">Case Reference</th>
                     <th className="px-6 py-3 font-medium text-gray-500 w-1/3">Victim Details</th>
@@ -238,11 +238,11 @@ export default function DatabaseView() {
                     <th className="px-6 py-3 font-medium text-gray-500">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-stone-200">
                   {filteredData.map((kase) => (
-                    <tr key={kase.id} className="hover:bg-gray-50">
+                    <tr key={kase.id} className="hover:bg-stone-100">
                       <td className="px-6 py-3">
-                        <a href={`/cases/${kase.id}`} className="font-medium text-indigo-600 hover:underline">
+                        <a href={`/cases/${kase.id}`} className="font-medium text-emerald-600 hover:underline">
                           {kase.firNumber}
                         </a>
                         <p className="text-xs text-gray-500 truncate max-w-[150px]">{kase.title}</p>

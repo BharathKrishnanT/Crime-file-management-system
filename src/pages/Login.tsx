@@ -7,6 +7,7 @@ export default function Login() {
   const { signIn, userProfile, setUserRole, user } = useAuth();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<'inspector' | 'asi' | 'writer' | 'constable' | 'judge' | ''>('');
+  const [firNumber, setFirNumber] = useState('');
   const [isSettingRole, setIsSettingRole] = useState(false);
 
   const handleLogin = async () => {
@@ -20,9 +21,11 @@ export default function Login() {
 
   const handleRoleSelection = async () => {
     if (!selectedRole) return;
+    if (selectedRole === 'writer' && !firNumber.trim()) return;
+    
     setIsSettingRole(true);
     try {
-      await setUserRole(selectedRole);
+      await setUserRole(selectedRole, firNumber.trim() || undefined);
       navigate('/');
     } catch (error) {
       console.error("Failed to set role", error);
@@ -39,10 +42,10 @@ export default function Login() {
 
   if (user && !userProfile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-stone-50 rounded-2xl shadow-xl p-8 space-y-6">
           <div className="text-center">
-            <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
               <UserRoleIcon role={selectedRole || 'constable'} />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Select Your Role</h2>
@@ -56,12 +59,12 @@ export default function Login() {
                 onClick={() => setSelectedRole(role as any)}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all flex items-center gap-4 ${
                   selectedRole === role
-                    ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600'
-                    : 'border-gray-200 hover:border-indigo-200 hover:bg-gray-50'
+                    ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600'
+                    : 'border-stone-200 hover:border-emerald-200 hover:bg-stone-100'
                 }`}
               >
                 <div className={`p-2 rounded-lg ${
-                  selectedRole === role ? 'bg-indigo-200' : 'bg-gray-100'
+                  selectedRole === role ? 'bg-emerald-200' : 'bg-stone-200'
                 }`}>
                   <UserRoleIcon role={role} />
                 </div>
@@ -73,10 +76,27 @@ export default function Login() {
             ))}
           </div>
 
+          {selectedRole === 'writer' && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+              <label htmlFor="firNumber" className="block text-sm font-medium text-gray-700">
+                FIR Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="firNumber"
+                value={firNumber}
+                onChange={(e) => setFirNumber(e.target.value)}
+                placeholder="Enter your FIR Number"
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                required
+              />
+            </div>
+          )}
+
           <button
             onClick={handleRoleSelection}
-            disabled={!selectedRole || isSettingRole}
-            className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            disabled={!selectedRole || (selectedRole === 'writer' && !firNumber.trim()) || isSettingRole}
+            className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-lg shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {isSettingRole ? 'Setting up...' : 'Continue to Dashboard'}
           </button>
@@ -91,9 +111,9 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="max-w-md w-full bg-stone-50 rounded-2xl shadow-2xl overflow-hidden">
         <div className="p-8 text-center space-y-6">
-          <div className="mx-auto w-20 h-20 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 transform -rotate-6">
+          <div className="mx-auto w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 transform -rotate-6">
             <Shield className="w-10 h-10 text-white" />
           </div>
           
@@ -105,14 +125,14 @@ export default function Login() {
           <div className="space-y-4 pt-4">
             <button
               onClick={handleLogin}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-stone-50 border border-stone-300 hover:bg-stone-100 text-gray-700 rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
             >
               <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
               Sign in with Google
             </button>
           </div>
         </div>
-        <div className="bg-gray-50 p-6 text-center border-t border-gray-100">
+        <div className="bg-stone-100 p-6 text-center border-t border-stone-200">
           <p className="text-xs text-gray-400 flex items-center justify-center gap-1">
             <Lock className="w-3 h-3" />
             Authorized Personnel Only

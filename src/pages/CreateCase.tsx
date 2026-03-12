@@ -54,8 +54,8 @@ export default function CreateCase() {
         Back to Dashboard
       </button>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-gray-50">
+      <div className="bg-stone-50 rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+        <div className="p-6 border-b border-stone-200 bg-stone-100">
           <h1 className="text-xl font-bold text-gray-900">New Case File</h1>
           <p className="text-sm text-gray-500 mt-1">Enter the details for the new First Information Report (FIR)</p>
         </div>
@@ -68,7 +68,7 @@ export default function CreateCase() {
                 type="text"
                 name="firNumber"
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="e.g., FIR-2024-001"
                 value={formData.firNumber}
                 onChange={handleChange}
@@ -80,7 +80,7 @@ export default function CreateCase() {
                 type="text"
                 name="title"
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Brief title of the incident"
                 value={formData.title}
                 onChange={handleChange}
@@ -93,7 +93,7 @@ export default function CreateCase() {
             <textarea
               name="description"
               rows={4}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Detailed description of the incident..."
               value={formData.description}
               onChange={handleChange}
@@ -106,7 +106,7 @@ export default function CreateCase() {
               <textarea
                 name="victimDetails"
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Name, age, contact, etc."
                 value={formData.victimDetails}
                 onChange={handleChange}
@@ -117,7 +117,7 @@ export default function CreateCase() {
               <textarea
                 name="suspectDetails"
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Name, description, etc."
                 value={formData.suspectDetails}
                 onChange={handleChange}
@@ -129,7 +129,7 @@ export default function CreateCase() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Initial Status</label>
             <select
               name="status"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               value={formData.status}
               onChange={handleChange}
             >
@@ -144,7 +144,7 @@ export default function CreateCase() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               {loading ? 'Creating...' : 'Create Case File'}

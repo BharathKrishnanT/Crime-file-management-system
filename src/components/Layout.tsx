@@ -29,11 +29,11 @@ export default function Layout() {
   const canViewDatabase = isAdmin || userProfile?.role === 'inspector';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-stone-100 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-10">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center gap-2 text-indigo-600">
+      <aside className="w-64 bg-stone-50 border-r border-stone-200 flex flex-col fixed h-full z-10">
+        <div className="p-6 border-b border-stone-200">
+          <div className="flex items-center gap-2 text-emerald-600">
             <Shield className="w-8 h-8" />
             <span className="font-bold text-xl tracking-tight">CrimeFile</span>
           </div>
@@ -45,8 +45,8 @@ export default function Layout() {
             to="/"
             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
               location.pathname === '/' 
-                ? 'bg-indigo-50 text-indigo-700' 
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-emerald-50 text-emerald-700' 
+                : 'text-gray-600 hover:bg-stone-100 hover:text-gray-900'
             }`}
           >
             <LayoutDashboard className="w-5 h-5" />
@@ -58,8 +58,8 @@ export default function Layout() {
               to="/create-case"
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 location.pathname === '/create-case' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-emerald-50 text-emerald-700' 
+                  : 'text-gray-600 hover:bg-stone-100 hover:text-gray-900'
               }`}
             >
               <PlusCircle className="w-5 h-5" />
@@ -72,8 +72,8 @@ export default function Layout() {
               to="/database"
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 location.pathname === '/database' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-emerald-50 text-emerald-700' 
+                  : 'text-gray-600 hover:bg-stone-100 hover:text-gray-900'
               }`}
             >
               <Database className="w-5 h-5" />
@@ -82,9 +82,9 @@ export default function Layout() {
           )}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-stone-200">
           <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
+            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
               {userProfile?.displayName?.charAt(0) || <User className="w-5 h-5" />}
             </div>
             <div className="flex-1 min-w-0">
@@ -98,7 +98,7 @@ export default function Layout() {
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-stone-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-stone-100 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

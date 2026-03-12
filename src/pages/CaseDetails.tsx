@@ -225,7 +225,7 @@ export default function CaseDetails() {
           {canEdit && !isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-300 rounded-lg text-gray-700 hover:bg-stone-100 transition-colors shadow-sm"
             >
               <Edit2 className="w-4 h-4" />
               Edit Case
@@ -243,8 +243,8 @@ export default function CaseDetails() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+      <div className="bg-stone-50 rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+        <div className="p-6 border-b border-stone-200 bg-stone-100 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
               {isEditing ? (
@@ -252,7 +252,7 @@ export default function CaseDetails() {
                   type="text"
                   value={editForm.title}
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-2 py-1"
+                  className="bg-stone-50 border border-stone-300 rounded px-2 py-1"
                 />
               ) : caseData.title}
             </h1>
@@ -271,7 +271,7 @@ export default function CaseDetails() {
               <select
                 value={editForm.status}
                 onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                className="bg-white border border-gray-300 rounded px-2 py-1 text-sm"
+                className="bg-stone-50 border border-stone-300 rounded px-2 py-1 text-sm"
               >
                 <option value="open">Open</option>
                 <option value="investigation">Investigation</option>
@@ -289,7 +289,7 @@ export default function CaseDetails() {
                 <textarea
                   value={editForm.description}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  className="w-full border border-gray-300 rounded p-2"
+                  className="w-full border border-stone-300 rounded p-2"
                   rows={4}
                 />
               ) : (
@@ -302,7 +302,7 @@ export default function CaseDetails() {
                 <textarea
                   value={editForm.victimDetails}
                   onChange={(e) => setEditForm({ ...editForm, victimDetails: e.target.value })}
-                  className="w-full border border-gray-300 rounded p-2"
+                  className="w-full border border-stone-300 rounded p-2"
                   rows={3}
                 />
               ) : (
@@ -317,7 +317,7 @@ export default function CaseDetails() {
                 <textarea
                   value={editForm.suspectDetails}
                   onChange={(e) => setEditForm({ ...editForm, suspectDetails: e.target.value })}
-                  className="w-full border border-gray-300 rounded p-2"
+                  className="w-full border border-stone-300 rounded p-2"
                   rows={3}
                 />
               ) : (
@@ -328,14 +328,14 @@ export default function CaseDetails() {
             <Section title="Attached Files" icon={<FileText className="w-5 h-5 text-gray-400" />}>
               <div className="space-y-3">
                 {files.map(file => (
-                  <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <div key={file.id} className="flex items-center justify-between p-3 bg-stone-100 rounded-lg border border-stone-200">
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="p-2 bg-white rounded border border-gray-200">
+                      <div className="p-2 bg-stone-50 rounded border border-stone-300">
                         <FileText className="w-4 h-4 text-gray-500" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">{file.description || file.type}</p>
-                        <a href={file.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                        <a href={file.url} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
                           View File <ExternalLink className="w-3 h-3" />
                         </a>
                       </div>
@@ -355,7 +355,7 @@ export default function CaseDetails() {
                 {canAddFile && (
                   <button
                     onClick={() => setShowFileModal(true)}
-                    className="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-500 hover:border-indigo-300 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-500 hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     Add File Record
@@ -385,16 +385,16 @@ export default function CaseDetails() {
         </div>
 
         {isEditing && (
-          <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+          <div className="p-6 bg-stone-100 border-t border-stone-200 flex justify-end gap-3">
             <button
               onClick={() => setIsEditing(false)}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-stone-50 border border-stone-300 rounded-lg text-gray-700 hover:bg-stone-100"
             >
               Cancel
             </button>
             <button
               onClick={handleUpdate}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
             >
               <Save className="w-4 h-4" />
               Save Changes
@@ -406,7 +406,7 @@ export default function CaseDetails() {
       {/* Add File Modal */}
       {showFileModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+          <div className="bg-stone-50 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-gray-900">Add File Record</h3>
               <button onClick={() => setShowFileModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -417,7 +417,7 @@ export default function CaseDetails() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">File Type</label>
                 <select
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-stone-300 rounded-lg px-3 py-2"
                   value={newFile.type}
                   onChange={(e) => setNewFile({ ...newFile, type: e.target.value })}
                 >
@@ -433,7 +433,7 @@ export default function CaseDetails() {
                 <input
                   type="text"
                   required
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-stone-300 rounded-lg px-3 py-2"
                   placeholder="e.g., Forensic Report"
                   value={newFile.description}
                   onChange={(e) => setNewFile({ ...newFile, description: e.target.value })}
@@ -444,7 +444,7 @@ export default function CaseDetails() {
                 <input
                   type="url"
                   required
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-stone-300 rounded-lg px-3 py-2"
                   placeholder="https://..."
                   value={newFile.url}
                   onChange={(e) => setNewFile({ ...newFile, url: e.target.value })}
@@ -455,13 +455,13 @@ export default function CaseDetails() {
                 <button
                   type="button"
                   onClick={() => setShowFileModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                  className="px-4 py-2 text-gray-600 hover:bg-stone-100 rounded-lg"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                 >
                   Add Record
                 </button>
